@@ -1,6 +1,8 @@
 from flask import Flask, redirect, url_for
 from flask_login import LoginManager
 from models import db, User
+import pyotp
+import qrcode
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
