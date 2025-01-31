@@ -20,7 +20,7 @@ db.init_app(app)
 bcrypt = Bcrypt()
 bcrypt.init_app(app)
 
-from routes.routes import main_bp
+from routes import main_bp
 
 app.register_blueprint(main_bp)
 

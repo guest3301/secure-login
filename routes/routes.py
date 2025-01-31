@@ -5,7 +5,6 @@ from helpers.response import make_response, handle_error
 from main import bcrypt
 
 main_bp = Blueprint('main', __name__)
-bcrypt = Bcrypt()
 
 @main_bp.route("/login", methods=["GET", "POST"])
 def login():
