@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Attendance</h1>
+
+<!-- Calendar for selecting date -->
+<input type="date" id="attendance-date">
+<div id="x" >
+<!-- Dropdown for selecting class -->
+<select id="class-select">
+    <option value="">Select Class name</option>
+    {% for class_name in class_names %}
+    <option value="{{ class_name.name }}">{{ class_name.name }}</option>
+    {% endfor %}
+</select>
+<select id="subject-select">
+    <option value="">Select subject</option>
+    {% for subject in current_user.subjects %}
+    <option value="{{ subject }}">{{ subject }}</option>
+    {% endfor %}
+</select>
+</div>
+<button id="view-attendance">View Attendance</button>
+<div id="students-container"></div>
+<button id="submit-attendance">Submit Attendance</button>
+<style>
+    .student-div {
+        display: block;
+        padding: 10px;
+        margin: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .student-div.present {
+        background-color: green;
+        color: white;
+    }
+    .student-div.absent {
+        background-color: red;
+        color: white;
+    }
+</style>
+<script src="{{ url_for('static', filename='js/attendance.js') }}">
+</script>
+{% endblock %}

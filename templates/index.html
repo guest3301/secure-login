@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>Students Attendance Management System</h1>
+{% if current_user.is_authenticated %}
+<p>You are currently logged in as {{ current_user.name }}.</p>
+<p><a href="{{ url_for('main.settings') }}">Settings</a></p>
+<p><a href="{{ url_for('admin.admin_panel') }}">Admin panel</a></p>
+{% else %}
+<p>Please <a href="{{ url_for('main.login') }}">login</a> to access the app.</p>
+{% endif %}
+{% endblock %}
