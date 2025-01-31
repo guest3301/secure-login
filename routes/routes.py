@@ -2,6 +2,7 @@ from flask import request, redirect, url_for, flash, abort, jsonify, Blueprint
 from flask_login import login_required, current_user, login_user, logout_user
 from models import User, db
 from helpers.response import make_response, handle_error
+from main import bcrypt
 
 main_bp = Blueprint('main', __name__)
 
@@ -12,7 +13,7 @@ def login():
         password = request.json.get("password", "")
         remember = request.json.get("remember", False)
         user = User.query.filter_by(username=username).first()
-        if user and user.check_password(password):
+        if user and bcrypt.check_password_hash(user.password_hash, password):
             login_user(user, remember=remember)
             return make_response("Successfully logged in.", 200)
         else:
@@ -30,7 +31,7 @@ def register():
         existing_user = User.query.filter_by(username=username).first()
         if existing_user is None:
             new_user = User(username=username)
-            new_user.set_password(password)
+            new_user.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
