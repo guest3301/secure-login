@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, session, redirect, url_for
 from flask_login import login_required, current_user, login_user, logout_user
 from models import User, db
 from helpers.response import make_response, handle_error
-from main import bcrypt
+from werkzeug.security import check_password_hash
 
 main_bp = Blueprint('main', __name__)
 
@@ -13,7 +13,7 @@ def login():
         password = request.json.get("password", "")
         remember = request.json.get("remember", False)
         user = User.query.filter_by(username=username).first()
-        if user and bcrypt.check_password_hash(user.password_hash, password):
+        if user and check_password_hash(user.password_hash, password):
             login_user(user, remember=remember)
             return make_response("Successfully logged in.", 200)
         else:
@@ -23,7 +23,7 @@ def login():
             return make_response("Already logged in.", 200)
         return make_response("Login page.", 200)
 
-@main_bp.route('/register', methods=['POST'])
+@main_bp.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == "POST":
         username = str(request.json["username"])

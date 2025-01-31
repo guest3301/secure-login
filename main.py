@@ -1,6 +1,5 @@
 from flask import Flask, redirect, url_for
 from flask_login import LoginManager
-from flask_bcrypt import Bcrypt
 from models import db, User
 
 app = Flask(__name__)
@@ -17,10 +16,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 db.init_app(app)
 
-bcrypt = Bcrypt()
-bcrypt.init_app(app)
-
-from routes import main_bp
+from routes.routes import main_bp
 
 app.register_blueprint(main_bp)
 
@@ -35,4 +31,4 @@ def unauthorized():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
