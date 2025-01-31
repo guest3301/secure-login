@@ -26,7 +26,7 @@ def login():
             return handle_error("Invalid username or password.", 401)
     else:
         if current_user.is_authenticated:
-            return make_response("Already logged in.", 200)
+            return handle_error("Already logged in.", 200)
         return make_response("Login page.", 200)
 
 @main_bp.route('/register', methods=['POST', 'GET'])
@@ -47,11 +47,13 @@ def register():
             return make_response("Username already exists. Please choose a different one.", 400)
     else:
         if current_user.is_authenticated:
-            return make_response("Already logged in.", 200)
+            return handle_error("Already logged in.", 400)
         return make_response("Register page.", 200)
     
 @main_bp.route("/logout")
 @login_required
 def logout():
+    if not current_user.is_authenticated:
+        return handle_error("Not logged in.", 401)
     logout_user()
-    return redirect(url_for("main.index"))
+    return make_response("Logged out.", 200)
