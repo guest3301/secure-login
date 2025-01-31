@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for
 from flask_login import LoginManager
+from flask_bcrypt import Bcrypt
 from models import db, User
 
 app = Flask(__name__)
@@ -15,6 +16,9 @@ app.config["SESSION_COOKIE_ENCODING"] = "utf-8"
 login_manager = LoginManager()
 login_manager.init_app(app)
 db.init_app(app)
+
+bcrypt = Bcrypt()
+bcrypt.init_app(app)
 
 from routes.routes import main_bp
 
