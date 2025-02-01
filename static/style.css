@@ -1,26 +1,55 @@
+/* Global Styles */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  font-family: 'Roboto', Arial, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #1e3c72, #2a5298, #1e3c72, #2a5298);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
 }
 
+/* Animated gradient background */
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Container Styles */
 .container {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 300px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  width: 320px;
   text-align: center;
+  animation: fadeIn 1s ease-out;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 h1 {
   margin-bottom: 20px;
+  font-weight: 700;
+  color: #333;
 }
 
+/* Form Styles */
 form {
   display: flex;
   flex-direction: column;
@@ -28,7 +57,8 @@ form {
 
 label {
   margin-bottom: 5px;
-  font-weight: bold;
+  font-weight: 500;
+  color: #333;
 }
 
 input {
@@ -36,6 +66,12 @@ input {
   margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  transition: border 0.3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #007bff;
 }
 
 button {
@@ -45,30 +81,37 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 button:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
 }
 
 #error-message {
   margin-top: 20px;
+  color: red;
 }
 
 a {
   color: #007bff;
   text-decoration: none;
+  font-weight: 500;
 }
 
 a:hover {
   text-decoration: underline;
 }
+
+/* Setup Modal and Carousel */
 .setup-modal {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: white;
+  background: rgba(255,255,255,0.97);
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0,0,0,0.2);
@@ -86,39 +129,6 @@ a:hover {
   z-index: 999;
 }
 
-.qr-container {
-  text-align: center;
-  margin: 1rem 0;
-}
-
-.backup-codes {
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 5px;
-  margin: 1rem 0;
-}
-
-.copy-btn {
-  background: #28a745;
-  margin-left: 0.5rem;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.8rem;
-}
-
-.secret-key {
-  word-break: break-all;
-  background: #fff3cd;
-  padding: 0.5rem;
-  border-radius: 4px;
-}
-
-.step-instruction {
-  margin: 1rem 0;
-  padding: 1rem;
-  background: #e9ecef;
-  border-radius: 5px;
-}
-/* Add to existing styles.css */
 .carousel-container {
   display: flex;
   overflow: hidden;
@@ -172,13 +182,16 @@ a:hover {
 .close-btn:hover {
   color: #000;
 }
+
+/* Dark Mode */
 body.dark-mode {
-  background-color: #121212;
+  background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #302b63);
+  animation: gradientBG 15s ease infinite;
   color: #ffffff;
 }
 
 .container.dark-mode {
-  background-color: #1e1e1e;
+  background: #1e1e1e;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
@@ -201,26 +214,15 @@ button.dark-mode:hover {
   background: rgba(255, 255, 255, 0.5);
 }
 
-.qr-container.dark-mode {
-  background-color: #333333;
-}
-
-.backup-codes.dark-mode {
+.qr-container.dark-mode,
+.backup-codes.dark-mode,
+.secret-key.dark-mode,
+.step-instruction.dark-mode {
   background-color: #333333;
   color: #ffffff;
 }
 
 .copy-btn.dark-mode {
   background-color: #555555;
-  color: #ffffff;
-}
-
-.secret-key.dark-mode {
-  background-color: #333333;
-  color: #ffffff;
-}
-
-.step-instruction.dark-mode {
-  background-color: #333333;
   color: #ffffff;
 }
