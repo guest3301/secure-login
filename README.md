@@ -9,7 +9,6 @@ This application provides a secure login system with two-factor authentication (
 - User logout
 - Two-Factor Authentication (2FA) using TOTP
 - Session management
-- Biometric authentication
 - Trusted locations
 - Usual login times
 - Dark mode
@@ -46,7 +45,7 @@ This application provides a secure login system with two-factor authentication (
 
 ## Biometric Authentication
 
-The application supports biometric authentication for enhanced security. Users can enable biometric authentication in their account settings. Once enabled, users will be prompted to authenticate using their biometric data (e.g., fingerprint or facial recognition) during login.
+_TODO:_ The application supports biometric authentication for enhanced security. Users can enable biometric authentication in their account settings. Once enabled, users will be prompted to authenticate using their biometric data (e.g., fingerprint or facial recognition) during login.
 
 ## Trusted Locations
 
