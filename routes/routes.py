@@ -43,6 +43,12 @@ def register():
     try:
         new_user = User(username=username)
         new_user.set_password(password)
+        new_user.usual_login_times = {
+            "start": data.get("start_time", "00:00"),
+            "end": data.get("end_time", "23:59")
+        }
+        location = requests.get(f"https://ipinfo.io/{request.remote_addr}/json").json().get("city", "")
+        new_user.trusted_locations = [location]
         new_user.otp_secret = pyotp.random_base32()  # Generate OTP secret on registration
         new_user.generate_backup_codes()
         db.session.add(new_user)
@@ -83,8 +89,6 @@ def logout():
         db.session.rollback()
         return handle_error(str(e), 500)
 
-# ======================== EXISTING ROUTES BELOW ========================
-# (Keep your existing login, verify-otp, refresh, protected, and setup-2fa routes)
 # Helper: Check time/location
 def check_time_location(user):
     now = datetime.now().time()
@@ -119,17 +123,17 @@ def login():
     if not check_time_location(user):
         return jsonify({
             "success": False,
+            "action_required": "Unknown location",
+            "message": "Login from an unknown location",   
+            "partial_token": create_access_token(identity=str(user.id), fresh=False)  # Temp token
+        }), 403
+    
+    return jsonify({
+            "success": False,
             "action_required": "otp",
             "partial_token": create_access_token(identity=str(user.id), fresh=False)  # Temp token
         }), 403
     
-    # Full login successful
-    access_token = create_access_token(identity=str(user.id), fresh=True)
-    refresh_token = create_refresh_token(identity=str(user.id))
-    return make_response(True, "Logged in", {
-        "access_token": access_token,
-        "refresh_token": refresh_token
-    })
 
 # Route: Verify OTP (Step 2)
 @main_bp.route("/verify-otp", methods=["POST"])

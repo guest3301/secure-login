@@ -19,33 +19,33 @@ let partialToken = null;
 let accessToken = null;
 const darkModeToggle = document.getElementById('dark-mode-toggle');
 
+function chngText() {
+  if (localStorage.getItem('darkMode') === 'true') {
+    darkModeToggle.textContent = 'Light mode';
+  }
+  else { darkModeToggle.textContent = 'Ahh, Dark mode?'; }
+}
+
+
+function enableDarkMode(force = false) {
+  const enable = force || !document.body.classList.contains('dark-mode');
+  document.body.classList.toggle('dark-mode', enable);
+  document.querySelector('.container').classList.toggle('dark-mode', enable);
+  document.querySelectorAll('button').forEach(button => button.classList.toggle('dark-mode', enable));
+  document.querySelectorAll('.setup-modal').forEach(modal => modal.classList.toggle('dark-mode', enable));
+  document.querySelectorAll('.setup-modal-overlay').forEach(overlay => overlay.classList.toggle('dark-mode', enable));
+  document.querySelectorAll('.qr-container').forEach(container => container.classList.toggle('dark-mode', enable));
+  document.querySelectorAll('.backup-codes').forEach(codes => codes.classList.toggle('dark-mode', enable));
+  document.querySelectorAll('.copy-btn').forEach(button => button.classList.toggle('dark-mode', enable));
+  document.querySelectorAll('.secret-key').forEach(key => key.classList.toggle('dark-mode', enable));
+  document.querySelectorAll('.step-instruction').forEach(instruction => instruction.classList.toggle('dark-mode', enable));
+
+  localStorage.setItem('darkMode', enable ? 'true' : 'false');
+}
+
 darkModeToggle.addEventListener('click', () => {
-  document.body.classList.toggle('dark-mode');
-  document.querySelector('.container').classList.toggle('dark-mode');
-  document.querySelectorAll('button').forEach(button => {
-    button.classList.toggle('dark-mode');
-  });
-  document.querySelectorAll('.setup-modal').forEach(modal => {
-    modal.classList.toggle('dark-mode');
-  });
-  document.querySelectorAll('.setup-modal-overlay').forEach(overlay => {
-    overlay.classList.toggle('dark-mode');
-  });
-  document.querySelectorAll('.qr-container').forEach(container => {
-    container.classList.toggle('dark-mode');
-  });
-  document.querySelectorAll('.backup-codes').forEach(codes => {
-    codes.classList.toggle('dark-mode');
-  });
-  document.querySelectorAll('.copy-btn').forEach(button => {
-    button.classList.toggle('dark-mode');
-  });
-  document.querySelectorAll('.secret-key').forEach(key => {
-    key.classList.toggle('dark-mode');
-  });
-  document.querySelectorAll('.step-instruction').forEach(instruction => {
-    instruction.classList.toggle('dark-mode');
-  });
+  enableDarkMode();
+  chngText();
 });
 
 // Toggle between login and register sections
@@ -95,13 +95,23 @@ loginForm.addEventListener('submit', async (e) => {
     showModal('An error occurred. Please try again.');
   }
 });
-
+function checkPasswordStrength(password) {
+  // Require at least 8 chars, one uppercase, one lowercase, one number
+  const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  if (!strongRegex.test(password)) {
+    return false;
+  }
+  return true;
+}
 // Handle register form submission
 registerForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const username = document.getElementByElementById('reg-username').value;
+  const username = document.getElementById('reg-username').value;
   const password = document.getElementById('reg-password').value;
-
+  if (!checkPasswordStrength(password)) {
+    showModal('Your password must be at least 8 characters long and include uppercase, lowercase, and a number.');
+    return;
+  }
   try {
     const response = await fetch('/register', {
       method: 'POST',
@@ -144,7 +154,7 @@ otpForm.addEventListener('submit', async (e) => {
       accessToken = data.data.access_token;
       otpSection.style.display = 'none';
       protectedSection.style.display = 'block';
-      protectedMessage.textContent = `Hello, user!`;
+      protectedMessage.textContent = `Hello, user!\nLogged in successfully!`;
     } else {
       showModal(data.message || 'OTP verification failed');
     }
@@ -174,6 +184,9 @@ backupCodeForm.addEventListener('submit', async (e) => {
       backupCodeSection.style.display = 'none';
       protectedSection.style.display = 'block';
       protectedMessage.textContent = `Hello, user!`;
+       const a = document.createElement('a');
+        a.href = '/protected';
+        a.textContent = 'Click here to access protected content';
     } else {
       showModal(data.message || 'Backup code verification failed');
     }
