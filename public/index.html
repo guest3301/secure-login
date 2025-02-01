@@ -11,7 +11,7 @@
     <h1>Secure Login with 2FA</h1>
     <div id="login-section">
       <h2>Login</h2>
-      <form id="login-form">
+      <form id="login-form" action="/login" method="POST">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
         <label for="password">Password:</label>
@@ -22,7 +22,7 @@
 
     <div id="otp-section" style="display: none;">
       <h2>Verify OTP</h2>
-      <form id="otp-form">
+      <form id="otp-form" action="/verify-otp" method="POST">
         <label for="otp">Enter OTP:</label>
         <input type="text" id="otp" name="otp" required>
         <button type="submit">Verify OTP</button>
