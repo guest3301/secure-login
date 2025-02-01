@@ -32,8 +32,7 @@ def check_if_token_revoked(jwt_header, jwt_payload):
 from routes.routes import main_bp
 app.register_blueprint(main_bp)
 
-
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(host="0.0.0.0", port=8000, debug=False)

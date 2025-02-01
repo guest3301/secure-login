@@ -155,6 +155,9 @@ otpForm.addEventListener('submit', async (e) => {
       otpSection.style.display = 'none';
       protectedSection.style.display = 'block';
       protectedMessage.textContent = `Hello, user!\nLogged in successfully!`;
+      var a = document.createElement('a');
+      a.href = '/protected';
+      a.textContent = 'Click here to access protected content';
     } else {
       showModal(data.message || 'OTP verification failed');
     }

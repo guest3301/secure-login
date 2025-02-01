@@ -58,7 +58,7 @@ def register():
         access_token = create_access_token(identity=str(new_user.id))
         refresh_token = create_refresh_token(identity=str(new_user.id))
         otp_uri = pyotp.totp.TOTP(new_user.otp_secret).provisioning_uri(
-        name=new_user.username, issuer_name="SecureLoginApp"
+        name=new_user.username, issuer_name="Secure Login App"
     )
         qr_code_base64 = generate_qr_code_base64(otp_uri)
     
@@ -97,8 +97,7 @@ def check_time_location(user):
     if not (start <= now <= end):
         return False
     
-    ip = request.remote_addr
-    location = requests.get(f"https://ipinfo.io/{ip}/json").json().get("city", "")
+    location = requests.get(f"https://ipinfo.io/{request.remote_addr}/json").json().get("city", "")
     return location in user.trusted_locations
 
 # Route: Login (Step 1)
