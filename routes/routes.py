@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from flask_limiter.util import get_remote_address 
 from flask_jwt_extended import (
     create_access_token,
@@ -20,6 +20,11 @@ from datetime import datetime, timezone
 
 main_bp = Blueprint('main', __name__)
 limiter = Limiter(key_func=get_remote_address, default_limits=["5 per minute"])
+
+# ======================== HOME ROUTE ========================
+@main_bp.route("/")
+def home():
+    return render_template("index.html")
 
 # ======================== REGISTER ROUTE ========================
 @main_bp.route("/register", methods=["POST"])
