@@ -190,3 +190,37 @@ button.dark-mode {
 button.dark-mode:hover {
   background-color: #555555;
 }
+
+/* Dark mode styles for modal text and buttons */
+.setup-modal.dark-mode {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+.setup-modal-overlay.dark-mode {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.qr-container.dark-mode {
+  background-color: #333333;
+}
+
+.backup-codes.dark-mode {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+.copy-btn.dark-mode {
+  background-color: #555555;
+  color: #ffffff;
+}
+
+.secret-key.dark-mode {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+.step-instruction.dark-mode {
+  background-color: #333333;
+  color: #ffffff;
+}
