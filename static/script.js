@@ -21,9 +21,9 @@ const darkModeToggle = document.getElementById('dark-mode-toggle');
 
 function chngText() {
   if (localStorage.getItem('darkMode') === 'true') {
-    darkModeToggle.textContent = 'Light mode';
+    darkModeToggle.textContent = 'change theme?';
   }
-  else { darkModeToggle.textContent = 'Ahh, Dark mode?'; }
+  else { darkModeToggle.textContent = 'Ahh, change theme?'; }
 }
 
 
