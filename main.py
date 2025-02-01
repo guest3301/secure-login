@@ -1,34 +1,36 @@
-from flask import Flask, redirect, url_for
-from flask_login import LoginManager
-from models import db, User
-import pyotp
-import qrcode
+from flask import Flask
+from flask_jwt_extended import JWTManager
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address 
+from models import db, TokenBlocklist
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config["SECRET_KEY"] = "mY-sUp3r-s3cr37-k3y"
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.sqlite"
-app.config["SESSION_COOKIE_NAME"] = "session"
-app.config["SESSION_COOKIE_HTTPONLY"] = True
-app.config["SESSION_COOKIE_SECURE"] = True
-app.config["SESSION_COOKIE_SAMESITE"] = "Strict"
-app.config["SESSION_COOKIE_ENCODING"] = "utf-8"
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES"))
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = int(os.getenv("JWT_REFRESH_TOKEN_EXPIRES"))
+app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies"]
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+# Initialize extensions
+jwt = JWTManager(app)
 db.init_app(app)
+limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["5 per minute"])
 
+# JWT Blocklist Configuration
+@jwt.token_in_blocklist_loader
+def check_if_token_revoked(jwt_header, jwt_payload):
+    jti = jwt_payload["jti"]
+    token = TokenBlocklist.query.filter_by(jti=jti).first()
+    return token is not None
+
+# Register blueprints
 from routes.routes import main_bp
-
 app.register_blueprint(main_bp)
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-@login_manager.unauthorized_handler
-def unauthorized():
-    return redirect(url_for("main.login"))
 
 if __name__ == "__main__":
     with app.app_context():
