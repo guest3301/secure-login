@@ -25,7 +25,29 @@ darkModeToggle.addEventListener('click', () => {
   document.querySelectorAll('button').forEach(button => {
     button.classList.toggle('dark-mode');
   });
+  document.querySelectorAll('.setup-modal').forEach(modal => {
+    modal.classList.toggle('dark-mode');
+  });
+  document.querySelectorAll('.setup-modal-overlay').forEach(overlay => {
+    overlay.classList.toggle('dark-mode');
+  });
+  document.querySelectorAll('.qr-container').forEach(container => {
+    container.classList.toggle('dark-mode');
+  });
+  document.querySelectorAll('.backup-codes').forEach(codes => {
+    codes.classList.toggle('dark-mode');
+  });
+  document.querySelectorAll('.copy-btn').forEach(button => {
+    button.classList.toggle('dark-mode');
+  });
+  document.querySelectorAll('.secret-key').forEach(key => {
+    key.classList.toggle('dark-mode');
+  });
+  document.querySelectorAll('.step-instruction').forEach(instruction => {
+    instruction.classList.toggle('dark-mode');
+  });
 });
+
 // Toggle between login and register sections
 registerLink.addEventListener('click', () => {
   loginSection.style.display = 'none';
@@ -77,7 +99,7 @@ loginForm.addEventListener('submit', async (e) => {
 // Handle register form submission
 registerForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const username = document.getElementById('reg-username').value;
+  const username = document.getElementByElementById('reg-username').value;
   const password = document.getElementById('reg-password').value;
 
   try {
