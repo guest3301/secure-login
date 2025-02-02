@@ -21,15 +21,19 @@ from datetime import datetime, timezone
 main_bp = Blueprint('main', __name__)
 limiter = Limiter(key_func=get_remote_address, default_limits=["5 per minute"])
 
-# ======================== HOME ROUTE ========================
 @main_bp.route("/")
 def home():
+    """
+    Render the home page.
+    """
     return render_template("index.html")
 
-# ======================== REGISTER ROUTE ========================
 @main_bp.route("/register", methods=["POST"])
 @limiter.limit("3 per minute")
 def register():
+    """
+    Register a new user.
+    """
     data = request.json
     username = data.get("username")
     password = data.get("password")
@@ -49,12 +53,11 @@ def register():
         }
         location = requests.get(f"https://ipinfo.io/{request.remote_addr}/json").json().get("city", "")
         new_user.trusted_locations = [location]
-        new_user.otp_secret = pyotp.random_base32()  # Generate OTP secret on registration
+        new_user.otp_secret = pyotp.random_base32()
         new_user.generate_backup_codes()
         db.session.add(new_user)
         db.session.commit()
         
-        # Auto-login after registration
         access_token = create_access_token(identity=str(new_user.id))
         refresh_token = create_refresh_token(identity=str(new_user.id))
         otp_uri = pyotp.totp.TOTP(new_user.otp_secret).provisioning_uri(
@@ -73,10 +76,12 @@ def register():
         db.session.rollback()
         return handle_error(str(e), 500)
 
-# ======================== LOGOUT ROUTE ========================
 @main_bp.route("/logout", methods=["POST"])
 @jwt_required()
 def logout():
+    """
+    Log out the current user.
+    """
     jti = get_jwt()["jti"]
     now = datetime.now(timezone.utc)
     
@@ -89,8 +94,10 @@ def logout():
         db.session.rollback()
         return handle_error(str(e), 500)
 
-# Helper: Check time/location
 def check_time_location(user):
+    """
+    Check if the current time and location are within the user's usual login times and trusted locations.
+    """
     now = datetime.now().time()
     start = datetime.strptime(user.usual_login_times["start"], "%H:%M").time()
     end = datetime.strptime(user.usual_login_times["end"], "%H:%M").time()
@@ -100,56 +107,55 @@ def check_time_location(user):
     location = requests.get(f"https://ipinfo.io/{request.remote_addr}/json").json().get("city", "")
     return location in user.trusted_locations
 
-# Route: Login (Step 1)
 @main_bp.route("/login", methods=["POST"])
 @limiter.limit("5 per minute")
 def login():
+    """
+    Log in a user.
+    """
     data = request.json
     user = User.query.filter_by(username=data.get("username")).first()
     
     if not user or not user.check_password(data.get("password", "")):
         return handle_error("Invalid credentials", 401)
     
-    # Biometric check (mock)
     if user.biometric_enabled and not data.get("biometric_token"):
         return jsonify({
             "success": False,
             "action_required": "biometric",
-            "partial_token": create_access_token(identity=str(user.id), fresh=False)  # Temp token
+            "partial_token": create_access_token(identity=str(user.id), fresh=False)
         }), 403
     
-    # Time/location check
     if not check_time_location(user):
         return jsonify({
             "success": False,
             "action_required": "Unknown location",
             "message": "Login from an unknown location",   
-            "partial_token": create_access_token(identity=str(user.id), fresh=False)  # Temp token
+            "partial_token": create_access_token(identity=str(user.id), fresh=False)
         }), 403
     
     return jsonify({
             "success": False,
             "action_required": "otp",
-            "partial_token": create_access_token(identity=str(user.id), fresh=False)  # Temp token
+            "partial_token": create_access_token(identity=str(user.id), fresh=False)
         }), 403
-    
 
-# Route: Verify OTP (Step 2)
 @main_bp.route("/verify-otp", methods=["POST"])
-@jwt_required(fresh=False)  # Requires non-fresh token (from partial login)
+@jwt_required(fresh=False)
 def verify_otp():
+    """
+    Verify the OTP or backup code for 2FA.
+    """
     user_id = get_jwt_identity()
     user = db.session.get(User, user_id)
     otp = request.json.get("otp", "")
     backup_code = request.json.get("backup_code", "")
     
     if pyotp.TOTP(user.otp_secret).verify(otp) or (backup_code in user.backup_codes):
-        # Invalidate backup code after use
         if backup_code:
             user.backup_codes.remove(backup_code)
             db.session.commit()
         
-        # Issue fresh tokens
         access_token = create_access_token(identity=str(user_id), fresh=True)
         refresh_token = create_refresh_token(identity=str(user_id))
         return make_response(True, "2FA verified", {
@@ -159,25 +165,31 @@ def verify_otp():
     
     return handle_error("Invalid OTP/backup code", 401)
 
-# Route: Refresh Token
 @main_bp.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True)
 def refresh():
+    """
+    Refresh the access token.
+    """
     user_id = get_jwt_identity()
     new_access_token = create_access_token(identity=str(user_id), fresh=False)
     return make_response(True, "Token refreshed", {"access_token": new_access_token})
 
-# Route: Protected Endpoint
 @main_bp.route("/protected")
 @jwt_required()
 def protected():
+    """
+    Access a protected endpoint.
+    """
     user_id = get_jwt_identity()
     return make_response(True, f"Hello, user {user_id}")
 
-# Route: Setup 2FA
 @main_bp.route("/setup-2fa", methods=["POST"])
 @jwt_required()
 def setup_2fa():
+    """
+    Set up 2FA for the current user.
+    """
     user = db.session.get(User, get_jwt_identity())
     user.otp_secret = pyotp.random_base32()
     user.backup_codes = [pyotp.random_base32() for _ in range(10)]
