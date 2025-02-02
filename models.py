@@ -16,15 +16,23 @@ class User(db.Model):
     backup_codes = db.Column(db.JSON, default=[])
 
     def set_password(self, password):
+        """
+        Set the password for the user.
+        """
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
+        """
+        Check if the provided password matches the stored password hash.
+        """
         return check_password_hash(self.password_hash, password)
 
     def generate_backup_codes(self):
+        """
+        Generate a list of backup codes for the user.
+        """
         self.backup_codes = [pyotp.random_base32() for _ in range(10)]
 
-# Add this for JWT token revocation (logout)
 class TokenBlocklist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     jti = db.Column(db.String(36), nullable=False, index=True)
