@@ -1,6 +1,6 @@
 # Secure Login Application
 
-This application provides a secure login system with two-factor authentication (2FA) using TOTP (Time-based One-Time Password).
+This application provides a secure login system with two-factor authentication (2FA) using TOTP (Time-based One-Time Password). It was honored with the **First Prize** at Techxpression – the hackathon organized by the Department of IT & CS at **B.K. Birla College, Kalyan**.
 
 ## Features
 
@@ -12,6 +12,10 @@ This application provides a secure login system with two-factor authentication (
 - Trusted locations
 - Usual login times
 - Dark mode
+
+## Achievement
+
+This project was awarded the **First Prize** in the hackathon at Techxpression, hosted by the Department of IT & CS at B.K. Birla College, Kalyan. The event showcased innovative solutions and technological excellence, with the theme AI & CyberSecurity.
 
 ## Setup
 
