@@ -5,6 +5,8 @@ from flask_limiter.util import get_remote_address
 from models import db, TokenBlocklist
 from dotenv import load_dotenv
 import os
+import threading
+import subprocess
 
 load_dotenv()
 
@@ -32,7 +34,13 @@ def check_if_token_revoked(jwt_header, jwt_payload):
 from routes.routes import main_bp
 app.register_blueprint(main_bp)
 
+def start_serveo():
+    subprocess.run(["ssh", "-R", "80:localhost:8000", "serveo.net"])
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+    
+    # Start Serveo SSH in a separate thread
+    threading.Thread(target=start_serveo).start()
     app.run(host="0.0.0.0", port=8000, debug=False)
